@@ -1,7 +1,10 @@
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class Home_Page extends StatefulWidget {
   const Home_Page({Key? key}) : super(key: key);
@@ -12,6 +15,24 @@ class Home_Page extends StatefulWidget {
 
 class _Home_PageState extends State<Home_Page> {
   var _current_index=0;
+
+
+  // Variables for API 1
+  Map datamap={};
+  List<dynamic>datalist=[];
+
+  // Variables for API 2
+
+  Map datamap_2={};
+  List<dynamic> datalist_2=[];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    call_api_1();
+    call_api_2();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     Size size=MediaQuery.of(context).size;
@@ -299,7 +320,7 @@ class _Home_PageState extends State<Home_Page> {
                   ),
                 ),
                 SizedBox(
-                  width: size.width*0.3,
+                  width: size.width*0.2,
                 ),
                 AutoSizeText(
                   "View all",
@@ -322,7 +343,7 @@ class _Home_PageState extends State<Home_Page> {
               child: ListView.builder(
                   padding: const EdgeInsets.only(top: 8,left: 5,bottom: 3),
                   scrollDirection: Axis.horizontal,
-                  itemCount: 2,
+                  itemCount: datalist.length,
                   itemBuilder: (context, index) =>
                       Padding(
                         padding: const EdgeInsets.only(left: 1,right: 15),
@@ -369,7 +390,7 @@ class _Home_PageState extends State<Home_Page> {
                                       child: Padding(
                                         padding: const EdgeInsets.only(left: 17),
                                         child: AutoSizeText(
-                                            "LIFESTYLE",
+                                            datalist[index]["category"].toString(),
                                             style: GoogleFonts.inter(
                                                 color: Colors.blueAccent,
                                                 fontWeight: FontWeight.w700,
@@ -387,7 +408,7 @@ class _Home_PageState extends State<Home_Page> {
                                       child: Padding(
                                         padding: const EdgeInsets.only(left: 17),
                                         child: AutoSizeText(
-                                            "A complete guide for your",
+                                            datalist[index]["name"],
                                             style: GoogleFonts.inter(
                                                 color: Colors.black87,
                                                 fontWeight: FontWeight.w700,
@@ -400,21 +421,7 @@ class _Home_PageState extends State<Home_Page> {
                                     SizedBox(
                                       height: size.height*0.007,
                                     ),
-                                    Align(
-                                      alignment: Alignment.topLeft,
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(left: 17),
-                                        child: AutoSizeText(
-                                            "new born baby",
-                                            style: GoogleFonts.inter(
-                                                color: Colors.black87,
-                                                fontWeight: FontWeight.w700,
-                                                fontSize: 17,
-                                                fontStyle: FontStyle.normal
-                                            )
-                                        ),
-                                      ),
-                                    ),
+
                                     SizedBox(
                                       height: size.height*0.035,
                                     ),
@@ -423,7 +430,7 @@ class _Home_PageState extends State<Home_Page> {
                                       child: Padding(
                                         padding: const EdgeInsets.only(left: 17),
                                         child: AutoSizeText(
-                                            "16 lessons",
+                                            "${datalist[index]["lesson"]} lessons",
                                             style: GoogleFonts.inter(
                                                 color: const Color.fromRGBO(109, 116, 122,1),
                                                 fontWeight: FontWeight.w500,
@@ -460,7 +467,7 @@ class _Home_PageState extends State<Home_Page> {
                   ),
                 ),
                 SizedBox(
-                  width: size.width*0.17,
+                  width: size.width*0.06,
                 ),
                 AutoSizeText(
                   "View all",
@@ -643,7 +650,7 @@ class _Home_PageState extends State<Home_Page> {
                   ),
                 ),
                 SizedBox(
-                  width: size.width*0.33,
+                  width: size.width*0.2,
                 ),
                 AutoSizeText(
                   "View all",
@@ -666,7 +673,7 @@ class _Home_PageState extends State<Home_Page> {
               child: ListView.builder(
                   padding: const EdgeInsets.only(top: 8,left: 5,bottom: 3),
                   scrollDirection: Axis.horizontal,
-                  itemCount: 2,
+                  itemCount: datalist_2.length,
                   itemBuilder: (context, index) =>
                       Padding(
                         padding: const EdgeInsets.only(left: 1,right: 15),
@@ -696,7 +703,7 @@ class _Home_PageState extends State<Home_Page> {
                                   decoration: const BoxDecoration(
                                       color: Color.fromRGBO(221, 227, 194,1),
                                       borderRadius: BorderRadius.only(topRight: Radius.circular(8.0),topLeft: Radius.circular(8.0),bottomLeft: Radius.zero,bottomRight: Radius.zero),
-                                      image: DecorationImage(image: AssetImage("assets/images/img_1.png"),fit: BoxFit.contain)
+                                      image: DecorationImage(image: AssetImage("assets/images/img_1.png"),fit: BoxFit.fill)
                                   ),
                                 ),
                                 SizedBox(
@@ -713,7 +720,7 @@ class _Home_PageState extends State<Home_Page> {
                                       child: Padding(
                                         padding: const EdgeInsets.only(left: 17),
                                         child: AutoSizeText(
-                                            "BABYCARE",
+                                            datalist_2[index]["category"].toString(),
                                             style: GoogleFonts.inter(
                                                 color: Colors.blueAccent,
                                                 fontWeight: FontWeight.w700,
@@ -731,11 +738,11 @@ class _Home_PageState extends State<Home_Page> {
                                       child: Padding(
                                         padding: const EdgeInsets.only(left: 17),
                                         child: AutoSizeText(
-                                            "Understanding of human",
+                                            datalist_2[index]["name"].toString(),
                                             style: GoogleFonts.inter(
                                                 color: Colors.black87,
                                                 fontWeight: FontWeight.w700,
-                                                fontSize: 17,
+                                                fontSize: size.height*0.015,
                                                 fontStyle: FontStyle.normal
                                             )
                                         ),
@@ -744,21 +751,7 @@ class _Home_PageState extends State<Home_Page> {
                                     SizedBox(
                                       height: size.height*0.007,
                                     ),
-                                    Align(
-                                      alignment: Alignment.topLeft,
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(left: 17),
-                                        child: AutoSizeText(
-                                            "behaviour",
-                                            style: GoogleFonts.inter(
-                                                color: Colors.black87,
-                                                fontWeight: FontWeight.w700,
-                                                fontSize: 17,
-                                                fontStyle: FontStyle.normal
-                                            )
-                                        ),
-                                      ),
-                                    ),
+
                                     SizedBox(
                                       height: size.height*0.015,
                                     ),
@@ -769,7 +762,7 @@ class _Home_PageState extends State<Home_Page> {
                                           child: Padding(
                                             padding: const EdgeInsets.only(left: 17),
                                             child: AutoSizeText(
-                                                "13 min",
+                                                "${datalist_2[index]["duration"].toString()} min",
                                                 style: GoogleFonts.inter(
                                                     color: const Color.fromRGBO(109, 116, 122,1),
                                                     fontWeight: FontWeight.w500,
@@ -782,8 +775,15 @@ class _Home_PageState extends State<Home_Page> {
                                         SizedBox(
                                           width: size.width*0.4,
                                         ),
+
+                                        datalist_2[index]["locked"].toString()=="false"?
                                         IconButton(onPressed: (){},
+
                                           icon: const Icon(Icons.lock_outline),iconSize: 32,color: const Color.fromRGBO(109, 116, 122,1),)
+                                         :
+                                        IconButton(onPressed: (){},
+
+                                          icon: const Icon(Icons.lock_open),iconSize: 32,color: const Color.fromRGBO(109, 116, 122,1),)
                                       ],
                                     )
 
@@ -854,4 +854,34 @@ class _Home_PageState extends State<Home_Page> {
 
     );
   }
+
+ Future call_api_1() async {
+    http.Response response;
+    response=await http.get(Uri.parse("https://632017e19f82827dcf24a655.mockapi.io/api/programs"));
+    if(response.statusCode==200)
+    {
+      setState(() {
+        datamap=jsonDecode(response.body);
+        datalist=datamap["items"];
+      });
+    }
+    else{
+      print("Error");
+    }
+  }
+  Future call_api_2() async {
+    http.Response response;
+    response=await http.get(Uri.parse("https://632017e19f82827dcf24a655.mockapi.io/api/lessons"));
+    if(response.statusCode==200)
+    {
+      setState(() {
+        datamap_2=jsonDecode(response.body);
+        datalist_2=datamap_2["items"];
+      });
+    }
+    else{
+      print("Error");
+    }
+  }
+
 }
